@@ -8,11 +8,11 @@ public class Order : IPartitionedEntity
 
     public Guid Id { get; set; }
 
-    public string PartitionKey { get; set; } = string.Empty;
+    public string PartitionKey { get; set; } = null!;
 
     public required DateOnly OrderDate { get; set; }
 
-    public required Guid CustomerId { get; set; }
+    public Guid CustomerId { get; set; }
 
     public Customer Customer
     {

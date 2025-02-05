@@ -1,4 +1,6 @@
-# Entity Framework Core Partition POC
+# Entity Framework Core Partition PoC
+
+Conceptual setup for a database with _Customers_, _Orders_, and _OrderItems_ partitioned on _year_ and _quarter_ using Entity Framework Core 9.0.
 
 ## Setup
 
