@@ -10,6 +10,8 @@ public class PartitionPocContext(DbContextOptions<PartitionPocContext> options) 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        const string yearAndQuarter = "CAST(YEAR(OrderDate) AS nvarchar(4)) + 'Q' + CAST(DATEPART(QUARTER, OrderDate) AS nvarchar(1))";
+
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.Property(customer => customer.Id).ValueGeneratedOnAdd();
@@ -19,7 +21,7 @@ public class PartitionPocContext(DbContextOptions<PartitionPocContext> options) 
         modelBuilder.Entity<Order>(entity =>
         {
             entity.Property(order => order.Id).ValueGeneratedOnAdd();
-            entity.Property(order => order.PartitionKey).HasMaxLength(6);
+            entity.Property(order => order.PartitionKey).HasMaxLength(6).ValueGeneratedOnAddOrUpdate().HasComputedColumnSql(yearAndQuarter, stored: true);
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
@@ -89,18 +91,18 @@ public class PartitionPocContext(DbContextOptions<PartitionPocContext> options) 
         modelBuilder.Entity<Order>().HasData(order1, order2, order3, order4, order5);
 
         ICollection<OrderItem> orderItems = [
-            new() { Id = Guid.Parse("718d2717-e71a-42c8-9638-59c78c3a6f95"), OrderId = order1.Id, Item = "Item 1", Price = 238.12m },
-            new() { Id = Guid.Parse("ba0a7a3f-0a6a-41fb-92df-7f77e3baaa65"), OrderId = order1.Id, Item = "Item 2", Price = 5776.43m },
-            new() { Id = Guid.Parse("3d310b25-d3c2-48cd-b8cc-f926eecc9060"), OrderId = order2.Id, Item = "Item 1", Price = 238.12m },
-            new() { Id = Guid.Parse("521e6807-ed49-4e3e-9323-a3fc16e653ab"), OrderId = order2.Id, Item = "Item 4", Price = 332.00m },
-            new() { Id = Guid.Parse("d4d78920-0faa-438d-9bc3-73e9e5a5cbb2"), OrderId = order3.Id, Item = "Item 7", Price = 223.00m },
-            new() { Id = Guid.Parse("3e756ab8-3b62-41a6-8a75-b6f8347f4f01"), OrderId = order3.Id, Item = "Item 9", Price = 988.00m },
-            new() { Id = Guid.Parse("704cf48c-8a74-49ee-a283-0f8af2aa880a"), OrderId = order3.Id, Item = "Item 8", Price = 3.00m },
-            new() { Id = Guid.Parse("454b3e7a-65ec-44a2-bc2f-2afc9fce2989"), OrderId = order3.Id, Item = "Item 4", Price = 88.00m },
-            new() { Id = Guid.Parse("90879c03-1e43-486f-8f02-50ba4b9cc4a0"), OrderId = order4.Id, Item = "Item 7", Price = 223.00m },
-            new() { Id = Guid.Parse("5546d99e-346b-4333-a716-7a30a562feac"), OrderId = order4.Id, Item = "Item 9", Price = 4576.00m },
-            new() { Id = Guid.Parse("b5f7c577-89b4-41dd-814a-b4d290deb733"), OrderId = order5.Id, Item = "Item 5", Price = 89.25m },
-            new() { Id = Guid.Parse("7fa197cb-950f-42e4-89bd-36ee23b8358a"), OrderId = order5.Id, Item = "Item 8", Price = 123.87m }
+            new() { Id = Guid.Parse("718d2717-e71a-42c8-9638-59c78c3a6f95"), PartitionKey = "2024Q1", OrderId = order1.Id, Item = "Item 1", Price = 238.12m },
+            new() { Id = Guid.Parse("ba0a7a3f-0a6a-41fb-92df-7f77e3baaa65"), PartitionKey = "2024Q1", OrderId = order1.Id, Item = "Item 2", Price = 5776.43m },
+            new() { Id = Guid.Parse("3d310b25-d3c2-48cd-b8cc-f926eecc9060"), PartitionKey = "2024Q2", OrderId = order2.Id, Item = "Item 1", Price = 238.12m },
+            new() { Id = Guid.Parse("521e6807-ed49-4e3e-9323-a3fc16e653ab"), PartitionKey = "2024Q2", OrderId = order2.Id, Item = "Item 4", Price = 332.00m },
+            new() { Id = Guid.Parse("d4d78920-0faa-438d-9bc3-73e9e5a5cbb2"), PartitionKey = "2024Q3", OrderId = order3.Id, Item = "Item 7", Price = 223.00m },
+            new() { Id = Guid.Parse("3e756ab8-3b62-41a6-8a75-b6f8347f4f01"), PartitionKey = "2024Q3", OrderId = order3.Id, Item = "Item 9", Price = 988.00m },
+            new() { Id = Guid.Parse("704cf48c-8a74-49ee-a283-0f8af2aa880a"), PartitionKey = "2024Q3", OrderId = order3.Id, Item = "Item 8", Price = 3.00m },
+            new() { Id = Guid.Parse("454b3e7a-65ec-44a2-bc2f-2afc9fce2989"), PartitionKey = "2024Q3", OrderId = order3.Id, Item = "Item 4", Price = 88.00m },
+            new() { Id = Guid.Parse("90879c03-1e43-486f-8f02-50ba4b9cc4a0"), PartitionKey = "2024Q4", OrderId = order4.Id, Item = "Item 7", Price = 223.00m },
+            new() { Id = Guid.Parse("5546d99e-346b-4333-a716-7a30a562feac"), PartitionKey = "2024Q4", OrderId = order4.Id, Item = "Item 9", Price = 4576.00m },
+            new() { Id = Guid.Parse("b5f7c577-89b4-41dd-814a-b4d290deb733"), PartitionKey = "2025Q1", OrderId = order5.Id, Item = "Item 5", Price = 89.25m },
+            new() { Id = Guid.Parse("7fa197cb-950f-42e4-89bd-36ee23b8358a"), PartitionKey = "2025Q1", OrderId = order5.Id, Item = "Item 8", Price = 123.87m }
         ];
 
         modelBuilder.Entity<OrderItem>().HasData(orderItems);

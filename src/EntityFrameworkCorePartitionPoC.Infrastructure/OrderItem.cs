@@ -6,7 +6,7 @@ public class OrderItem : IPartitionedEntity
 
     public Guid Id { get; set; }
 
-    public string PartitionKey { get; set; } = string.Empty;
+    public string PartitionKey { get; set; } = null!;
 
     public Guid OrderId { get; set; }
 

@@ -52,13 +52,13 @@ public class PartitionPocContextTests
     {
         Order order = new()
         {
-            OrderDate = DateOnly.FromDateTime(DateTime.Today),
+            OrderDate = DateOnly.Parse("2024-05-23"),
             CustomerId = Guid.Parse("6b7e5907-403f-468f-affe-ddf693d2ba69"),
             Volume = 12,
             Weight = 4225,
             OrderItems = [
-                new() { Item = "Boxes", Price = 43.00m },
-                new() { Item = "Hot Air", Price = 0.00m }
+                new() { PartitionKey = "2024Q2", Item = "Boxes", Price = 43.00m },
+                new() { PartitionKey = "2024Q2", Item = "Hot Air", Price = 0.00m }
             ]
         };
 
@@ -69,6 +69,7 @@ public class PartitionPocContextTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(order.Id, Is.Not.EqualTo(Guid.Empty));
+            Assert.That(order.PartitionKey, Is.EqualTo("2024Q2"));
             Assert.That(await _context.OrderItems.Where(o => o.OrderId == order.Id).ToListAsync(), Has.Count.EqualTo(2));
         }
     }
