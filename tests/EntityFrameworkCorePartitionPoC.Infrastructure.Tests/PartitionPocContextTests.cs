@@ -92,6 +92,18 @@ public class PartitionPocContextTests
         }
     }
 
+    [Test]
+    public async Task OrderPartition2024Q1Has3Orders()
+    {
+        var partitionKey = "2024Q1";
+
+        var partition = await _context.Database.SqlQuery<int>($"SELECT TOP 1 $PARTITION.PartitionByQuarter (PartitionKey) AS Value FROM dbo.Orders WHERE PartitionKey = {partitionKey}").SingleAsync();
+
+        var orders = await _context.Orders.FromSql($"SELECT Id, PartitionKey, OrderDate, CustomerId, Volume, Weight FROM dbo.Orders WHERE $PARTITION.PartitionByQuarter (PartitionKey) = {partition}").ToListAsync();
+
+        Assert.That(orders, Has.Count.EqualTo(3));
+    }
+
     [TearDown]
     public async Task TearDown()
     {
@@ -109,7 +121,7 @@ public class PartitionPocContextTests
         {
             Id = Guid.Parse("fca25cc3-fd41-4d57-bc3f-fab878b84e18"),
             Customer = adidas,
-            OrderDate = DateOnly.Parse("2024-02-05"),
+            OrderDate = DateOnly.Parse("2023-11-05"),
             Volume = 42,
             Weight = 2342,
             OrderItems = [
@@ -122,7 +134,7 @@ public class PartitionPocContextTests
         {
             Id = Guid.Parse("cd545d42-4722-47a2-a740-923ac2532c49"),
             Customer = esteeLauder,
-            OrderDate = DateOnly.Parse("2024-05-29"),
+            OrderDate = DateOnly.Parse("2024-02-03"),
             Volume = 12,
             Weight = 2,
             OrderItems = [
@@ -135,7 +147,7 @@ public class PartitionPocContextTests
         {
             Id = Guid.Parse("23312ae0-3de3-4d39-ab9a-44e3c683c36c"),
             Customer = primark,
-            OrderDate = DateOnly.Parse("2024-08-01"),
+            OrderDate = DateOnly.Parse("2024-03-02"),
             Volume = 4756,
             Weight = null,
             OrderItems = [
@@ -150,7 +162,7 @@ public class PartitionPocContextTests
         {
             Id = Guid.Parse("18917576-fb65-428b-a47b-e86cf79b7355"),
             Customer = primark,
-            OrderDate = DateOnly.Parse("2024-11-09"),
+            OrderDate = DateOnly.Parse("2024-03-31"),
             Volume = 235,
             Weight = 288,
             OrderItems = [
