@@ -21,7 +21,7 @@ public class PartitionPocContext(DbContextOptions<PartitionPocContext> options) 
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(order => new { order.Id, order.PartitionKey });
+            entity.HasKey(order => new { order.Id, order.PartitionKey }).IsClustered(false);
             entity.Property(order => order.Id).ValueGeneratedOnAdd().HasValueGenerator<SequentialGuidValueGenerator>();
             entity.Property(order => order.PartitionKey).HasMaxLength(6).ValueGeneratedOnAdd().HasValueGenerator<OrderPartitionKeyGenerator>();
             entity.HasMany(order => order.OrderItems).WithOne(item => item.Order).HasForeignKey(item => new { item.OrderId, item.PartitionKey });
@@ -29,7 +29,7 @@ public class PartitionPocContext(DbContextOptions<PartitionPocContext> options) 
 
         modelBuilder.Entity<OrderItem>(entity =>
         {
-            entity.HasKey(item => new { item.Id, item.PartitionKey });
+            entity.HasKey(item => new { item.Id, item.PartitionKey }).IsClustered(false);
             entity.Property(item => item.Id).ValueGeneratedOnAdd().HasValueGenerator<SequentialGuidValueGenerator>();
             entity.Property(item => item.PartitionKey).HasMaxLength(6);
             entity.Property(item => item.Item).HasMaxLength(50);

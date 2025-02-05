@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EntityFrameworkCorePartitionPoC.Infrastructure.Migrations
 {
     [DbContext(typeof(PartitionPocContext))]
-    [Migration("20250205205143_InitialMigration")]
+    [Migration("20250205214324_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -69,6 +69,8 @@ namespace EntityFrameworkCorePartitionPoC.Infrastructure.Migrations
 
                     b.HasKey("Id", "PartitionKey");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id", "PartitionKey"), false);
+
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
@@ -97,6 +99,8 @@ namespace EntityFrameworkCorePartitionPoC.Infrastructure.Migrations
                         .HasColumnType("decimal(19,4)");
 
                     b.HasKey("Id", "PartitionKey");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id", "PartitionKey"), false);
 
                     b.HasIndex("OrderId", "PartitionKey");
 

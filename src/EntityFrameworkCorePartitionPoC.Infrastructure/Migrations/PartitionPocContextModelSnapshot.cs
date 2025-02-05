@@ -66,6 +66,8 @@ namespace EntityFrameworkCorePartitionPoC.Infrastructure.Migrations
 
                     b.HasKey("Id", "PartitionKey");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id", "PartitionKey"), false);
+
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
@@ -94,6 +96,8 @@ namespace EntityFrameworkCorePartitionPoC.Infrastructure.Migrations
                         .HasColumnType("decimal(19,4)");
 
                     b.HasKey("Id", "PartitionKey");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id", "PartitionKey"), false);
 
                     b.HasIndex("OrderId", "PartitionKey");
 

@@ -36,7 +36,8 @@ namespace EntityFrameworkCorePartitionPoC.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => new { x.Id, x.PartitionKey });
+                    table.PrimaryKey("PK_Orders", x => new { x.Id, x.PartitionKey })
+                        .Annotation("SqlServer:Clustered", false);
                     table.ForeignKey(
                         name: "FK_Orders_Customers_CustomerId",
                         column: x => x.CustomerId,
@@ -57,7 +58,8 @@ namespace EntityFrameworkCorePartitionPoC.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderItems", x => new { x.Id, x.PartitionKey });
+                    table.PrimaryKey("PK_OrderItems", x => new { x.Id, x.PartitionKey })
+                        .Annotation("SqlServer:Clustered", false);
                     table.ForeignKey(
                         name: "FK_OrderItems_Orders_OrderId_PartitionKey",
                         columns: x => new { x.OrderId, x.PartitionKey },
