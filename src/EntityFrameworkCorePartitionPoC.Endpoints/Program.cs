@@ -1,10 +1,16 @@
 
 using EntityFrameworkCorePartitionPoC.Endpoints;
+using EntityFrameworkCorePartitionPoC.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Environment.IsDevelopment()
+    ? builder.Configuration.GetConnectionString(nameof(PartitionPocContext))
+    : Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
+
 // Add services to the container.
-builder.Services.AddAuthorization();
+builder.Services.AddDbContext<PartitionPocContext>(options => options.UseSqlServer(connectionString));
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -18,8 +24,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 var summaries = new[]
 {
